@@ -14,7 +14,7 @@
 
     Bolt.connect a: boltA, b: boltB
 
-    boltA.emit a: "testing: #{__filename}"
+    boltA.emit a: "testing dustup"
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2013 Patrick Mueller

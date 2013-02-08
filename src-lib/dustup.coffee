@@ -1,8 +1,13 @@
 # Licensed under the Tumbolia Public License. See footer for details.
 
-util = require "util"
-
 dustup = exports
+
+#-------------------------------------------------------------------------------
+
+if process?.nextTick
+    nextTick = process.nextTick
+else
+    nextTick = (func) -> setTimeout func, 0
 
 #-------------------------------------------------------------------------------
 dustup.Bolt  = class Bolt
@@ -21,7 +26,7 @@ dustup.Bolt  = class Bolt
 
     #---------------------------------------------------------------------------
     @nextTick: (func) ->
-        process.nextTick func
+        nextTick func
 
     #---------------------------------------------------------------------------
     constructor: (letSpec) ->

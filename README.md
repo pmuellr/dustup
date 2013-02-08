@@ -1,10 +1,10 @@
-dustup - in-process pipelines for JavaScript kinda like Twitter Storm
+dustup - pipelines for JavaScript
 ================================================================================
 
-[Twitter Storm](http://storm-project.net/) is cool, but it would be nice to
-have a version just for dealing with in-process stuff in JavaScript, compared
-to full-fledged multi-machine distribution.  Other liberties have been taken.
-
+`dustup` is based on the high level design of
+[Twitter Storm](http://storm-project.net/), but for JavaScript, and it's
+all in process.  Other liberties have been taken.  The terminology of
+*inlets* and *outlets* is from [Pure Data](http://puredata.info/).
 
 what is
 --------------------------------------------------------------------------------
@@ -12,14 +12,13 @@ what is
 In Storm, you have *spouts* with generate data, and *bolts* which read and/or
 write data.  In `dustup`, there are no *spouts*, just Bolts.
 
-The inlets and outlets of a Bolt are named and defined when you create the
-bolt.  After creating a bolt, you can connect it's inlets and outlets to other
-bolt's outlets and inlets (respectively).
+Bolts have inlets and outlets; data is received from inlets and can be
+sent out on outlets.  Inlets and outlets can be connected together.
+When a message is sent on an outlet, any inlets which are connected to the
+outlet will receive the message.
 
-Finally, you start `emit()`ing data from a Bolt's outlet.  And let things happen.
-Any inlet connected to an outlet that `emit()`s data will have it's inlet
-function invoked.  The bolt's inlet function can then `emit()` an object to it's
-own outlets to continue the fun.
+The inlets and outlets of a Bolt are named and defined when you create the
+bolt.
 
 Inlet functions are always invoked with `this` set to the inlet's bolt,
 and always invoked on *nextTick*, asynchronously.
@@ -103,7 +102,6 @@ the inlet.  The value should be a function which takes one argument - the data
 Inlet functions are always invoked with `this` set to the inlet's bolt,
 and always invoked on *nextTick*, asynchronously.
 
-
 `outlets` are specified as an object whose properties are the name/value of
 the outlet.  The value is currently ignored.
 
@@ -155,6 +153,23 @@ A couple of constraints:
 Same as `Bolt.disconnect(connectionSpecs)`, only an existing connection between
 an inlet and outlet will be removed.
 
+### error handling for inlet functions ###
+
+You can arrange to have automatic error handling for inlet functions by creating
+an outlet on the inlet's bolt named `error`.  If an exception is caught
+while running such an inlet function, an error object will be `emit()`ed on
+the `error` outlet.  The object contains the following properties:
+
+* `outletBolt` - the bolt which generated the data the inlet is processing
+* `outletName` - the name of the outlet which generated the data
+* `inletBolt`  - the bolt which owns the inlet which was passed the data
+* `inletName`  - the name of the inet which was passed the data
+* `data`       - the data that was passed to the inlet
+* `error`      - the exception which occurred
+
+Note that if you do **NOT** have an `error` outlet on such bolts, no
+exception handling will take place, so exceptions will generally flow to the
+top level and kill your program.
 
 copyright
 --------------------------------------------------------------------------------
