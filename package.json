@@ -1,0 +1,24 @@
+{
+    "name":              "dustup",
+    "description":       "in-process pipelines for JavaScript like Twitter Storm",
+    "author":            "Patrick Mueller",
+    "version":           "0.1.0",
+    "tags":              [ "pipeline" ],
+
+    "devDependencies": {
+        "coffee-script": "1.4.x",
+        "mocha":         "1.8.x",
+        "should":        "1.2.x"
+    },
+
+    "main" :             "./lib/dustup",
+
+    "homepage":          "https://github.com/pmuellr/dustup",
+    "bugs":              "https://github.com/pmuellr/dustup/issues",
+
+    "repository": {
+      "type":            "git",
+      "url":             "git://github.com/pmuellr/dustup"
+    }
+}
+
